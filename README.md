@@ -5,5 +5,8 @@
 <a href="https://codeclimate.com/github/Sophia-Filimonova/python-project-50/test_coverage"><img src="https://api.codeclimate.com/v1/badges/3e561a75ae07b9d982c9/test_coverage" /></a>
 
 
-Аскинема:
+Аскинема json:
 <a href="https://asciinema.org/a/2OqYPzEuPewucKLATjMEHAo3T" target="_blank"><img src="https://asciinema.org/a/2OqYPzEuPewucKLATjMEHAo3T.svg" /></a>
+
+Аскинема yaml:
+<a href="https://asciinema.org/a/c4ULkuM97vKUWGRJpwqFWNNYd" target="_blank"><img src="https://asciinema.org/a/c4ULkuM97vKUWGRJpwqFWNNYd.svg" /></a>
