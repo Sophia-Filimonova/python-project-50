@@ -1,39 +1,49 @@
 from gendiff.parser import parse_file
+from gendiff.formatter import stylish
+# import yaml
 
 
-def generate_diff(path_to_file1, path_to_file2):
+def convert(value):
+    if isinstance(value, dict):
+        keys = sorted(list(value.keys()))
+        new_dict = {}
+        for key in keys:
+            new_dict['     ' + key] = convert(value[key])
+        return new_dict
+    return value
+
+
+def generate_diff_dict(dict1, dict2):
+    keys = sorted(list(dict1.keys() | dict2.keys()))
+    diff_dict = {}
+    i = 0
+    for key in keys:
+        if key not in dict1:
+            diff_dict[str(i) + '  + ' + key] = convert(dict2[key])
+        elif key not in dict2:
+            diff_dict[str(i) + '  - ' + key] = convert(dict1[key])
+        else:
+            if isinstance(dict1[key], dict) and isinstance(dict2[key], dict):
+                diff_dict[str(i) + '    ' + key] = generate_diff_dict(
+                    dict1[key], dict2[key])
+            elif dict1[key] == dict2[key]:
+                diff_dict[str(i) + '    ' + key] = convert(dict1[key])
+            else:
+                diff_dict[str(i) + '  - ' + key] = convert(dict1[key])
+                i += 1
+                diff_dict[str(i) + '  + ' + key] = convert(dict2[key])
+        i += 1
+    return diff_dict
+
+
+def generate_diff(path_to_file1, path_to_file2, format_dict=stylish):
     dict1 = parse_file(path_to_file1)
     dict2 = parse_file(path_to_file2)
-    keys1 = list(dict1.keys())
-    keys2 = list(dict2.keys())
-    keys = keys1 + keys2
-    keys.sort()
-    i = 0
-    result = ['{']
-    while i < len(keys):
-        c_key = keys[i]
-        if i < len(keys) - 1:
-            n_key = keys[i + 1]
-        else:
-            n_key = None
-        if c_key == n_key:
-            value1 = dict1[c_key]
-            value2 = dict2[c_key]
-            if value1 == value2:
-                result.append(f'    {c_key}: {str(value1).lower()}')
-            else:
-                result.append(f'  - {c_key}: {str(value1).lower()}')
-                result.append(f'  + {c_key}: {str(value2).lower()}')
-            i += 2
-        else:
-            if c_key in keys1:
-                value = dict1[c_key]
-                result.append(f'  - {c_key}: {str(value).lower()}')
-            else:
-                value = dict2[c_key]
-                result.append(f'  + {c_key}: {str(value).lower()}')
-            i += 1
-    result.append('}')
-    diff_string = '\n'.join(result)
+
+    # open('tests/fixtures/file1_recurs.yaml', 'w').write(yaml.dump(dict1))
+    # open('tests/fixtures/file2_recurs.yaml', 'w').write(yaml.dump(dict2))
+
+    diff_dict = generate_diff_dict(dict1, dict2)
+    diff_string = format_dict(diff_dict)
 
     return diff_string

@@ -3,9 +3,9 @@ import yaml
 
 
 def parse_file(path_to_file):
-    parts = path_to_file.split('.')
-    if parts[-1] == 'json':
+    extension = path_to_file.split('.')[-1]
+    if extension == 'json':
         dict = json.load(open(path_to_file))
-    if parts[-1] in ('yaml', 'yml'):
+    if extension in ('yaml', 'yml'):
         dict = yaml.safe_load(open(path_to_file))
     return dict
