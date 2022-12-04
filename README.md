@@ -13,3 +13,6 @@
 
 Аскинема JSON YAML (recursive):
 <a href="https://asciinema.org/a/DzazLmOM3m4qJZJEDRH6ZnqZq" target="_blank"><img src="https://asciinema.org/a/DzazLmOM3m4qJZJEDRH6ZnqZq.svg" /></a>
+
+Аскинема с форматером plain:
+<a href="https://asciinema.org/a/X1suVY4gI7vPSTe0tstg7mKhP" target="_blank"><img src="https://asciinema.org/a/X1suVY4gI7vPSTe0tstg7mKhP.svg" /></a>

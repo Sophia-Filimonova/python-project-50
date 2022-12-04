@@ -1,5 +1,5 @@
 from gendiff.parser import parse_file
-from gendiff.formatter import stylish
+from gendiff.formaters import stylish
 # import yaml
 
 
