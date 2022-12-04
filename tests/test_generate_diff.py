@@ -1,5 +1,6 @@
 from gendiff import generate_diff
 from gendiff.formaters import plain
+from gendiff.formaters import to_json
 
 
 def test_generate_diff_stylish_plain():
@@ -40,4 +41,19 @@ def test_generate_diff_plain():
     diff_yaml = generate_diff(
         'tests/fixtures/file1_recurs.yaml',
         'tests/fixtures/file2_recurs.yaml', plain)
+    assert diff_yaml == expected_result
+
+
+def test_generate_diff_to_json():
+
+    expected_result = open('tests/fixtures/result_to_json.txt').read()
+
+    diff_json = generate_diff(
+        'tests/fixtures/file1_recurs.json',
+        'tests/fixtures/file2_recurs.json', to_json)
+    assert diff_json == expected_result
+
+    diff_yaml = generate_diff(
+        'tests/fixtures/file1_recurs.yaml',
+        'tests/fixtures/file2_recurs.yaml', to_json)
     assert diff_yaml == expected_result

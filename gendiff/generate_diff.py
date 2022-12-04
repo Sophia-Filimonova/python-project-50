@@ -1,5 +1,7 @@
 from gendiff.parser import parse_file
 from gendiff.formaters import stylish
+from gendiff.formaters import plain      # noqa: F401
+from gendiff.formaters import to_json    # noqa: F401
 # import yaml
 
 
@@ -8,7 +10,7 @@ def convert(value):
         keys = sorted(list(value.keys()))
         new_dict = {}
         for key in keys:
-            new_dict['     ' + key] = convert(value[key])
+            new_dict['    ' + key] = convert(value[key])
         return new_dict
     return value
 
@@ -16,23 +18,20 @@ def convert(value):
 def generate_diff_dict(dict1, dict2):
     keys = sorted(list(dict1.keys() | dict2.keys()))
     diff_dict = {}
-    i = 0
     for key in keys:
         if key not in dict1:
-            diff_dict[str(i) + '  + ' + key] = convert(dict2[key])
+            diff_dict['  + ' + key] = convert(dict2[key])
         elif key not in dict2:
-            diff_dict[str(i) + '  - ' + key] = convert(dict1[key])
+            diff_dict['  - ' + key] = convert(dict1[key])
         else:
             if isinstance(dict1[key], dict) and isinstance(dict2[key], dict):
-                diff_dict[str(i) + '    ' + key] = generate_diff_dict(
+                diff_dict['    ' + key] = generate_diff_dict(
                     dict1[key], dict2[key])
             elif dict1[key] == dict2[key]:
-                diff_dict[str(i) + '    ' + key] = convert(dict1[key])
+                diff_dict['    ' + key] = convert(dict1[key])
             else:
-                diff_dict[str(i) + '  - ' + key] = convert(dict1[key])
-                i += 1
-                diff_dict[str(i) + '  + ' + key] = convert(dict2[key])
-        i += 1
+                diff_dict['  - ' + key] = convert(dict1[key])
+                diff_dict['  + ' + key] = convert(dict2[key])
     return diff_dict
 
 

@@ -9,15 +9,15 @@ def stringify(value):
 def stylish(diff_dict):
 
     def iter_(dict_, depth):
-        keys = sorted(list(dict_.keys()))
+        keys = list(dict_.keys())
         indent = '    ' * depth
         result = ['{']
         for key in keys:
             value = dict_[key]
             if not isinstance(value, dict):
-                result.append(f'{indent}{key[1:]}: {stringify(value)}')
+                result.append(f'{indent}{key}: {stringify(value)}')
             else:
-                result.append(f'{indent}{key[1:]}: {iter_(value, depth + 1)}')
+                result.append(f'{indent}{key}: {iter_(value, depth + 1)}')
         result.append(indent + '}')
         result_str = '\n'.join(result)
         return result_str

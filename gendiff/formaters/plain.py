@@ -11,20 +11,20 @@ def stringify(value):
 def plain(diff_dict):   # noqa: C901
 
     def iter_(dict_, path):
-        keys = sorted(list(dict_.keys()))
+        keys = list(dict_.keys())
         result = []
         i = 0
         while i < len(keys):
-            key = keys[i][5:]
+            key = keys[i][4:]
             value = dict_[keys[i]]
             path.append(key)
-            sign = keys[i][3]
+            sign = keys[i][2]
             if sign == '+':
                 result.append(
                     f"Property '{'.'.join(path)}' was added "
                     f"with value: {stringify(value)}")
             elif sign == '-':
-                next_key = keys[i + 1][5:]
+                next_key = keys[i + 1][4:]
                 next_value = dict_[keys[i + 1]]
                 if key == next_key:
                     result.append(

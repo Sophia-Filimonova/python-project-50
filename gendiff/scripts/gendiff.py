@@ -4,6 +4,7 @@ import argparse
 from gendiff import generate_diff
 from gendiff.formaters import stylish
 from gendiff.formaters import plain
+from gendiff.formaters import to_json
 
 
 def main():
@@ -23,6 +24,8 @@ def main():
         diff = generate_diff(args.first_file, args.second_file, stylish)
     elif args.format == 'plain':
         diff = generate_diff(args.first_file, args.second_file, plain)
+    elif args.format == 'json':
+        diff = generate_diff(args.first_file, args.second_file, to_json)
 
     print(diff)
 
