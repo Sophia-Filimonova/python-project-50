@@ -24,8 +24,12 @@ def plain(diff_dict):   # noqa: C901
                     f"Property '{'.'.join(path)}' was added "
                     f"with value: {stringify(value)}")
             elif sign == '-':
-                next_key = keys[i + 1][4:]
-                next_value = dict_[keys[i + 1]]
+                if i < len(keys) - 1:
+                    next_key = keys[i + 1][4:]
+                    next_value = dict_[keys[i + 1]]
+                else:
+                    next_key = None
+                    next_value = None
                 if key == next_key:
                     result.append(
                         f"Property '{'.'.join(path)}' was updated. "
