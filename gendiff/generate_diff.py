@@ -1,7 +1,5 @@
 from gendiff.parser import parse_file
-from gendiff.formaters import stylish
-from gendiff.formaters import plain      # noqa: F401
-from gendiff.formaters import to_json    # noqa: F401
+from gendiff.formaters import stylish, plain, to_json
 # import yaml
 
 
@@ -35,7 +33,7 @@ def generate_diff_dict(dict1, dict2):
     return diff_dict
 
 
-def generate_diff(path_to_file1, path_to_file2, format_dict=stylish):
+def generate_diff(path_to_file1, path_to_file2, format_name='stylish'):
     dict1 = parse_file(path_to_file1)
     dict2 = parse_file(path_to_file2)
 
@@ -43,6 +41,11 @@ def generate_diff(path_to_file1, path_to_file2, format_dict=stylish):
     # open('tests/fixtures/file2_recurs.yaml', 'w').write(yaml.dump(dict2))
 
     diff_dict = generate_diff_dict(dict1, dict2)
+    format_dict = stylish
+    if format_name == 'plain':
+        format_dict = plain
+    elif format_name == 'json':
+        format_dict = to_json
     diff_string = format_dict(diff_dict)
 
     return diff_string
