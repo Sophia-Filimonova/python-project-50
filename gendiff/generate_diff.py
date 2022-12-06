@@ -1,51 +1,43 @@
 from gendiff.parser import parse_file
 from gendiff.formaters import stylish, plain, to_json
-# import yaml
 
 
-def convert(value):
-    if isinstance(value, dict):
-        keys = sorted(list(value.keys()))
-        new_dict = {}
-        for key in keys:
-            new_dict['    ' + key] = convert(value[key])
-        return new_dict
-    return value
-
-
-def generate_diff_dict(dict1, dict2):
+def generate_diff_tree(dict1, dict2):
     keys = sorted(list(dict1.keys() | dict2.keys()))
-    diff_dict = {}
+    tree = []
     for key in keys:
+        node = {}
+        node["key"] = key
         if key not in dict1:
-            diff_dict['  + ' + key] = convert(dict2[key])
+            node["value1"] = dict2[key]
+            node["action"] = "added"
         elif key not in dict2:
-            diff_dict['  - ' + key] = convert(dict1[key])
+            node["value1"] = dict1[key]
+            node["action"] = "removed"
         else:
             if isinstance(dict1[key], dict) and isinstance(dict2[key], dict):
-                diff_dict['    ' + key] = generate_diff_dict(
+                node["action"] = "nested"
+                node["children"] = generate_diff_tree(
                     dict1[key], dict2[key])
             elif dict1[key] == dict2[key]:
-                diff_dict['    ' + key] = convert(dict1[key])
+                node["action"] = "same"
+                node["value1"] = dict1[key]
             else:
-                diff_dict['  - ' + key] = convert(dict1[key])
-                diff_dict['  + ' + key] = convert(dict2[key])
-    return diff_dict
+                node["action"] = "changed"
+                node["value1"] = dict1[key]
+                node["value2"] = dict2[key]
+        tree.append(node)
+    return tree
 
 
 def generate_diff(path_to_file1, path_to_file2, format_name='stylish'):
     dict1 = parse_file(path_to_file1)
     dict2 = parse_file(path_to_file2)
-
-    # open('tests/fixtures/file1_recurs.yaml', 'w').write(yaml.dump(dict1))
-    # open('tests/fixtures/file2_recurs.yaml', 'w').write(yaml.dump(dict2))
-
-    diff_dict = generate_diff_dict(dict1, dict2)
-    format_dict = stylish
+    diff_tree = generate_diff_tree(dict1, dict2)
+    format_tree = stylish
     if format_name == 'plain':
-        format_dict = plain
+        format_tree = plain
     elif format_name == 'json':
-        format_dict = to_json
-    diff_string = format_dict(diff_dict)
-
-    return diff_string
+        format_tree = to_json
+    diff = format_tree(diff_tree)
+    return diff

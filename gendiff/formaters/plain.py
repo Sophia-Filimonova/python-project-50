@@ -8,41 +8,29 @@ def stringify(value):
     return str(value).lower()
 
 
-def plain(diff_dict):   # noqa: C901
+def plain(diff_tree):     # noqa: C901
 
-    def iter_(dict_, path):
-        keys = list(dict_.keys())
-        result = []
-        i = 0
-        while i < len(keys):
-            key = keys[i][4:]
-            value = dict_[keys[i]]
-            path.append(key)
-            sign = keys[i][2]
-            if sign == '+':
-                result.append(
-                    f"Property '{'.'.join(path)}' was added "
-                    f"with value: {stringify(value)}")
-            elif sign == '-':
-                if i < len(keys) - 1:
-                    next_key = keys[i + 1][4:]
-                    next_value = dict_[keys[i + 1]]
-                else:
-                    next_key = None
-                    next_value = None
-                if key == next_key:
-                    result.append(
-                        f"Property '{'.'.join(path)}' was updated. "
-                        f"From {stringify(value)} to {stringify(next_value)}")
-                    i += 1
-                else:
-                    result.append(f"Property '{'.'.join(path)}' was removed")
-            elif sign == ' ':
-                if isinstance(value, dict):
-                    result.append(iter_(value, path))
-            i += 1
+    def iter_(tree, path):
+        lines = []
+        for node in tree:
+            path.append(node["key"])
+            full_path = '.'.join(path)
+            if node["action"] == "added":
+                lines.append(
+                    f"Property '{full_path}' was added "
+                    f'with value: {stringify(node["value1"])}')
+            elif node["action"] == "removed":
+                lines.append(
+                    f"Property '{full_path}' was removed")
+            elif node["action"] == "changed":
+                lines.append(
+                    f"Property '{full_path}' was updated. "
+                    f'From {stringify(node["value1"])} '
+                    f'to {stringify(node["value2"])}')
+            elif node["action"] == "nested":
+                lines.append(iter_(node["children"], path))
             path.pop()
-        result_str = '\n'.join(result)
-        return result_str
+        output = '\n'.join(lines)
+        return output
 
-    return iter_(diff_dict, [])
+    return iter_(diff_tree, [])

@@ -1,25 +1,50 @@
-def stringify(value):
+def stringify(value, indent):
     if value is None:
         return 'null'
     if isinstance(value, str):
         return value
+    if isinstance(value, dict):
+        keys = sorted(list(value.keys()))
+        indent += '    '
+        lines = ['{']
+        for key in keys:
+            lines.append(f"{indent}    {key}: {stringify(value[key], indent)}")
+        lines.append(indent + '}')
+        return '\n'.join(lines)
     return str(value).lower()
 
 
-def stylish(diff_dict):
+def stylish(diff_tree):    # noqa: C901
 
-    def iter_(dict_, depth):
-        keys = list(dict_.keys())
+    def iter_(tree, depth):
         indent = '    ' * depth
-        result = ['{']
-        for key in keys:
-            value = dict_[key]
-            if not isinstance(value, dict):
-                result.append(f'{indent}{key}: {stringify(value)}')
-            else:
-                result.append(f'{indent}{key}: {iter_(value, depth + 1)}')
-        result.append(indent + '}')
-        result_str = '\n'.join(result)
-        return result_str
+        lines = ['{']
+        for node in tree:
+            if node["action"] == "added":
+                lines.append(
+                    f'{indent}  + {node["key"]}: '
+                    f'{stringify(node["value1"], indent)}')
+            elif node["action"] == "removed":
+                lines.append(
+                    f'{indent}  - {node["key"]}: '
+                    f'{stringify(node["value1"], indent)}')
+            elif node["action"] == "same":
+                lines.append(
+                    f'{indent}    {node["key"]}: '
+                    f'{stringify(node["value1"], indent)}')
+            elif node["action"] == "changed":
+                lines.append(
+                    f'{indent}  - {node["key"]}: '
+                    f'{stringify(node["value1"], indent)}')
+                lines.append(
+                    f'{indent}  + {node["key"]}: '
+                    f'{stringify(node["value2"], indent)}')
+            elif node["action"] == "nested":
+                lines.append(
+                    f'{indent}    {node["key"]}: '
+                    f'{iter_(node["children"], depth + 1)}')
+        lines.append(indent + '}')
+        output = '\n'.join(lines)
+        return output
 
-    return iter_(diff_dict, 0)
+    return iter_(diff_tree, 0)

@@ -35,7 +35,7 @@ import pytest
     'tests/fixtures/file2_recurs.yaml',
     'tests/fixtures/result_to_json.txt',
     'json')])
-def test_generate_diff_stylish_plain(file1, file2, result, format):
+def test_generate_diff(file1, file2, result, format):
 
     expected_result = open(result).read()
     diff = generate_diff(file1, file2, format)
