@@ -8,9 +8,9 @@ def stringify(value):
     return str(value).lower()
 
 
-def plain(diff_tree):     # noqa: C901
+def plain(diff_tree):
 
-    def iter_(tree, path):
+    def iter_(tree, path=[]):
         lines = []
         for node in tree:
             path.append(node["key"])
@@ -33,4 +33,4 @@ def plain(diff_tree):     # noqa: C901
         output = '\n'.join(lines)
         return output
 
-    return iter_(diff_tree, [])
+    return iter_(diff_tree)

@@ -3,41 +3,45 @@ import pytest
 
 
 @pytest.mark.parametrize("file1, file2, result, format", [(
-    'tests/fixtures/file1_plain.json',
-    'tests/fixtures/file2_plain.json',
-    'tests/fixtures/result_stylish_plain.txt',
+    'file1_plain.json',
+    'file2_plain.json',
+    'result_stylish_plain.txt',
     'stylish'), (
-    'tests/fixtures/file1_plain.yaml',
-    'tests/fixtures/file2_plain.yaml',
-    'tests/fixtures/result_stylish_plain.txt',
+    'file1_plain.yaml',
+    'file2_plain.yaml',
+    'result_stylish_plain.txt',
     'stylish'), (
-    'tests/fixtures/file1_recurs.json',
-    'tests/fixtures/file2_recurs.json',
-    'tests/fixtures/result_stylish_recurs.txt',
+    'file1_recurs.json',
+    'file2_recurs.json',
+    'result_stylish_recurs.txt',
     'stylish'), (
-    'tests/fixtures/file1_recurs.yaml',
-    'tests/fixtures/file2_recurs.yaml',
-    'tests/fixtures/result_stylish_recurs.txt',
+    'file1_recurs.yaml',
+    'file2_recurs.yaml',
+    'result_stylish_recurs.txt',
     'stylish'), (
-    'tests/fixtures/file1_recurs.json',
-    'tests/fixtures/file2_recurs.json',
-    'tests/fixtures/result_plain.txt',
+    'file1_recurs.json',
+    'file2_recurs.json',
+    'result_plain.txt',
     'plain'), (
-    'tests/fixtures/file1_recurs.yaml',
-    'tests/fixtures/file2_recurs.yaml',
-    'tests/fixtures/result_plain.txt',
+    'file1_recurs.yaml',
+    'file2_recurs.yaml',
+    'result_plain.txt',
     'plain'), (
-    'tests/fixtures/file1_recurs.json',
-    'tests/fixtures/file2_recurs.json',
-    'tests/fixtures/result_to_json.txt',
+    'file1_recurs.json',
+    'file2_recurs.json',
+    'result_to_json.txt',
     'json'), (
-    'tests/fixtures/file1_recurs.yaml',
-    'tests/fixtures/file2_recurs.yaml',
-    'tests/fixtures/result_to_json.txt',
+    'file1_recurs.yaml',
+    'file2_recurs.yaml',
+    'result_to_json.txt',
     'json')])
 def test_generate_diff(file1, file2, result, format):
 
-    expected_result = open(result).read()
-    diff = generate_diff(file1, file2, format)
+    def get_path(file_name):
+        return 'tests/fixtures/' + file_name
+
+    with open(get_path(result)) as f:
+        expected_result = f.read()
+    diff = generate_diff(get_path(file1), get_path(file2), format)
 
     assert diff == expected_result

@@ -14,9 +14,9 @@ def stringify(value, indent):
     return str(value).lower()
 
 
-def stylish(diff_tree):    # noqa: C901
+def stylish(diff_tree):
 
-    def iter_(tree, depth):
+    def iter_(tree, depth=0):
         indent = '    ' * depth
         lines = ['{']
         for node in tree:
@@ -47,4 +47,4 @@ def stylish(diff_tree):    # noqa: C901
         output = '\n'.join(lines)
         return output
 
-    return iter_(diff_tree, 0)
+    return iter_(diff_tree)

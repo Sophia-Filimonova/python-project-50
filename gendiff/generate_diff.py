@@ -1,43 +1,37 @@
-from gendiff.parser import parse_file
-from gendiff.formaters import stylish, plain, to_json
+from gendiff.parser import get_data
+from gendiff.formaters import apply_format
 
 
-def generate_diff_tree(dict1, dict2):
-    keys = sorted(list(dict1.keys() | dict2.keys()))
+def generate_diff_tree(data1, data2):
+    keys = sorted(list(data1.keys() | data2.keys()))
     tree = []
     for key in keys:
         node = {}
         node["key"] = key
-        if key not in dict1:
-            node["value1"] = dict2[key]
+        if key not in data1:
+            node["value1"] = data2[key]
             node["action"] = "added"
-        elif key not in dict2:
-            node["value1"] = dict1[key]
+        elif key not in data2:
+            node["value1"] = data1[key]
             node["action"] = "removed"
         else:
-            if isinstance(dict1[key], dict) and isinstance(dict2[key], dict):
+            if isinstance(data1[key], dict) and isinstance(data2[key], dict):
                 node["action"] = "nested"
                 node["children"] = generate_diff_tree(
-                    dict1[key], dict2[key])
-            elif dict1[key] == dict2[key]:
+                    data1[key], data2[key])
+            elif data1[key] == data2[key]:
                 node["action"] = "same"
-                node["value1"] = dict1[key]
+                node["value1"] = data1[key]
             else:
                 node["action"] = "changed"
-                node["value1"] = dict1[key]
-                node["value2"] = dict2[key]
+                node["value1"] = data1[key]
+                node["value2"] = data2[key]
         tree.append(node)
     return tree
 
 
-def generate_diff(path_to_file1, path_to_file2, format_name='stylish'):
-    dict1 = parse_file(path_to_file1)
-    dict2 = parse_file(path_to_file2)
-    diff_tree = generate_diff_tree(dict1, dict2)
-    format_tree = stylish
-    if format_name == 'plain':
-        format_tree = plain
-    elif format_name == 'json':
-        format_tree = to_json
-    diff = format_tree(diff_tree)
-    return diff
+def generate_diff(path_to_file1, path_to_file2, format='stylish'):
+    data1 = get_data(path_to_file1)
+    data2 = get_data(path_to_file2)
+    diff_tree = generate_diff_tree(data1, data2)
+    return apply_format(diff_tree, format)
