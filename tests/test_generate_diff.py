@@ -1,5 +1,6 @@
 from gendiff import generate_diff
 import pytest
+import os.path
 
 
 @pytest.mark.parametrize("file1, file2, result, format", [(
@@ -38,10 +39,9 @@ import pytest
 def test_generate_diff(file1, file2, result, format):
 
     def get_path(file_name):
-        return 'tests/fixtures/' + file_name
+        return os.path.join('tests/fixtures/', file_name)
 
     with open(get_path(result)) as f:
         expected_result = f.read()
-    diff = generate_diff(get_path(file1), get_path(file2), format)
-
-    assert diff == expected_result
+        diff = generate_diff(get_path(file1), get_path(file2), format)
+        assert diff == expected_result
