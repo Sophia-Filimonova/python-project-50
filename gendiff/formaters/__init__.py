@@ -5,12 +5,10 @@ from gendiff.formaters.to_json import to_json
 
 def apply_format(diff_tree, format):
     if format == 'stylish':
-        format_tree = stylish
+        return stylish(diff_tree)
     elif format == 'plain':
-        format_tree = plain
+        return plain(diff_tree)
     elif format == 'json':
-        format_tree = to_json
+        return to_json(diff_tree)
     else:
         raise Exception('Invalid type of format')
-    diff = format_tree(diff_tree)
-    return diff
