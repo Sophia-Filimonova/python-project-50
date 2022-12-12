@@ -8,7 +8,7 @@ def stringify(value):
     return str(value).lower()
 
 
-def plain(tree, path=[]):
+def _walk(tree, path=[]):
     lines = []
     for node in tree:
         path.append(node["key"])
@@ -26,7 +26,10 @@ def plain(tree, path=[]):
                 f'From {stringify(node["value1"])} '
                 f'to {stringify(node["value2"])}')
         elif node["action"] == "nested":
-            lines.append(plain(node["children"], path))
+            lines.append(_walk(node["children"], path))
         path.pop()
-    output = '\n'.join(lines)
-    return output
+    return '\n'.join(lines)
+
+
+def plain(tree):
+    return _walk(tree)

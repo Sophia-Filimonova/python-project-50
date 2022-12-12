@@ -15,7 +15,7 @@ def convert_to_str(value, indent):
     return str(value).lower()
 
 
-def stylish(tree, depth=0):    # noqa: C901
+def _walk(tree, depth=0):
     indent = '    ' * depth
     lines = ['{']
     for node in tree:
@@ -24,7 +24,7 @@ def stylish(tree, depth=0):    # noqa: C901
         value2 = convert_to_str(node.get("value2"), indent)
         if node["action"] == "nested":
             lines.append(f'{indent}    {key}: '
-                         f'{stylish(node["children"], depth + 1)}')
+                         f'{_walk(node["children"], depth + 1)}')
             continue
         if node["action"] == "added":
             lines.append(f'{indent}  + {key}: {value1}')
@@ -35,8 +35,13 @@ def stylish(tree, depth=0):    # noqa: C901
         if node["action"] == "same":
             lines.append(f'{indent}    {key}: {value1}')
             continue
-        if node["action"] == "changed":
-            lines.append(f'{indent}  - {key}: {value1}')
-            lines.append(f'{indent}  + {key}: {value2}')
+
+        lines.append(f'{indent}  - {key}: {value1}')
+        lines.append(f'{indent}  + {key}: {value2}')
+
     lines.append(indent + '}')
     return '\n'.join(lines)
+
+
+def stylish(tree):
+    return _walk(tree)
